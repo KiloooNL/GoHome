@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public GameManager manager;
+
     public float moveSpeed = 20f; // Movement Speed
     public GameObject deathParticles;
 
@@ -20,21 +22,15 @@ public class PlayerMovement : MonoBehaviour
         rbName = GetComponent<Rigidbody>();
         spawn = transform.position;
 
+        // Get GameManager class.
+        manager = manager.GetComponent<GameManager>();
 
-        /*   TODO: FIX THIS BUG
-           UPDATE: fixed?
-
-        if(SceneManager.GetActiveScene().name != "Level 1")
-        {
-            SceneManager.LoadScene("Level 1");
-        }
-        */
-        print("Current Level: Level " + GameManager.currentLevel);
+        print("Current Level: Level " + manager.currentLevel);
 
     }
 
     void FixedUpdate()
-    {
+    {   
         input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 
         if (rbName.velocity.magnitude < maxSpeed)
@@ -73,7 +69,16 @@ public class PlayerMovement : MonoBehaviour
         if (other.transform.tag == "Finish")
         {
             Destroy(gameObject);
-            GameManager.CompleteLevel();
+            manager.CompleteLevel();
+        }
+
+        // Collect coin
+        if(other.transform.tag == "Coin")
+        {
+            // Add to score & remove coin.
+            print("Collected coin.");
+            manager.AddCoin();
+            Destroy(other.gameObject);
         }
     }
 

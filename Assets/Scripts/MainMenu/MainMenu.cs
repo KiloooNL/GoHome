@@ -4,15 +4,21 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    Rect playPosition = new Rect(400, 120, 140, 45);
-    Rect playTimerPosition = new Rect(400, 175, 140, 45);
+    Rect newGamePosition = new Rect(400, 120, 140, 45);
+    //Rect newGameTimerPosition = new Rect(400, 120, 140, 45);
+    Rect resumePosition = new Rect(400, 175, 140, 45);
+    //Rect resumeTimerPosition = new Rect(400, 140, 140, 45);
     Rect quitPosition = new Rect(400, 235, 140, 45);
     Rect gameNamePosition = new Rect(300, 30, 400, 75);
 
+    public int levelCompleted;
+
     public GUISkin skin;
 
-    // enable timer?
-    public static bool timerEnabled = false;
+    void Start()
+    {
+        levelCompleted = PlayerPrefs.GetInt("Level Completed");
+    }
 
     void OnGUI()
     {
@@ -21,21 +27,17 @@ public class MainMenu : MonoBehaviour
 
         GUI.Label(gameNamePosition, "Sphere Runner");
 
-        if (GUI.Button(playPosition, "Play"))
+        if (GUI.Button(newGamePosition, "New Game"))
         {
-            // Play!
-            print("Player pressed play (Menu -> Play)");
-            print("Loading level one.");
-            timerEnabled = false;
-            SceneManager.LoadScene("Level 1");
+            NewGame(false);
         }
-        if (GUI.Button(playTimerPosition, "Play (With Timer)"))
+
+        if(levelCompleted > 0)
         {
-            // Play with timer on.
-            print("Player pressed play w/ timer (Menu -> Play w/ Timer)");
-            print("Loading level one.");
-            timerEnabled = true;
-            SceneManager.LoadScene("Level 1");
+            if (GUI.Button(resumePosition, "Resume Game"))
+            {
+                resumeGame(false);
+            }
         }
 
         if (GUI.Button(quitPosition, "Quit"))
@@ -45,5 +47,43 @@ public class MainMenu : MonoBehaviour
             Application.Quit();
         }
 
+        /*
+        TODO: Make this functional...
+
+        if (GUI.Button(newGameTimerPosition, "New Game (With Timer)"))
+        {
+            NewGame(true);
+        }
+        
+        if (GUI.Button(resumeTimerPosition, "Resume Game (With Timer)"))
+        {
+
+        }
+        */
+
+    }
+
+    void NewGame(bool timer)
+    {
+        PlayerPrefs.SetInt("Level Completed", 0);
+        if(timer == true)
+        {
+
+        }
+        
+        print("Loading level one.");
+        SceneManager.LoadScene("Level 1");
+    }
+
+    void resumeGame(bool timer)
+    {
+
+        if(timer == true)
+        {
+
+        }
+
+        print("Resuming game... from level" + levelCompleted.ToString());
+        SceneManager.LoadScene(levelCompleted);
     }
 }

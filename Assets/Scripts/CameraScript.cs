@@ -13,6 +13,9 @@ public class CameraScript : MonoBehaviour {
 
     public void Update()
     {
-        transform.position = player.transform.position + _offset;
+        if(player != null)
+        {
+            transform.position = player.transform.position + _offset;
+        }
     }
 }
