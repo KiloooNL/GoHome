@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour {
         //      rewardPlayer();
         // }
         
+
         if (startTime <= 0)
         {
             startTime = 0;
