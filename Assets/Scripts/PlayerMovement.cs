@@ -77,7 +77,14 @@ public class PlayerMovement : MonoBehaviour
         {
             // Add to score & remove coin.
             print("Collected coin.");
-            manager.AddCoin();
+
+            // Add coin to coin count score.
+            manager.coinCount++;
+
+            // We don't need to call this function because all it does is
+            // increment manager.coinCount by 1. (coinCount++)
+            // We may re-add this function once sound is added.
+            //manager.AddCoin();
             Destroy(other.gameObject);
         }
     }

@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour {
 
     // Init GUI Skin
     public GUISkin skin;
-    public Rect timerRect;
+    private Rect timerRect = new Rect(445, 5, 0, 0);
+    private Rect coinRect = new Rect(695, 5, 0, 0);
 
     // Timer variables
     public float startTime;
@@ -29,7 +30,11 @@ public class GameManager : MonoBehaviour {
     // References
     public GameObject coinParent;
 
+    // Booleans
+    private bool showWinScreen = false;
+    private bool completed;
 
+    public int winScreenWidth, winScreenHeight;
 
     // dont destroy on new scene load
     void Start()
@@ -61,25 +66,28 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        startTime -= Time.deltaTime;
-        currentTime = string.Format("{0:0.0}", startTime);
 
         // Add function:
         // if (countCount == totalCoinCount) {
         //      rewardPlayer();
         // }
-        
 
-        if (startTime <= 0)
+        if (!completed)
         {
-            startTime = 0;
-            print("You're out of time.");
+            startTime -= Time.deltaTime;
+            currentTime = string.Format("{0:0.0}", startTime);
 
-            if (SceneManager.GetActiveScene().name != "main_menu")
+            if (startTime <= 0)
             {
-                // clear timer, etc. load main menu
-                Destroy(gameObject);
-                LoadMainMenu();
+                startTime = 0;
+                print("You're out of time.");
+
+                if (SceneManager.GetActiveScene().name != "main_menu")
+                {
+                    // clear timer, etc. load main menu
+                    Destroy(gameObject);
+                    LoadMainMenu();
+                }
             }
         }
     }
@@ -92,24 +100,37 @@ public class GameManager : MonoBehaviour {
 
     public void CompleteLevel()
     {
+        showWinScreen = true;
+        completed = true;
+    }
 
-        if(currentLevel < 3)
+    void LoadNextLevel()
+    {
+
+        if (currentLevel < 3)
         {
             // Player reached the end
             print("Player reached end of level.");
             currentLevel++;
-            PlayerPrefs.SetInt("Level Completed", currentLevel);
-            PlayerPrefs.SetInt("Level " + currentLevel.ToString() + " score", currentScore);
 
-
+            SaveGame();
             print("Loading next level: Level " + currentLevel);
+            LoadNextLevel();
             SceneManager.LoadScene(currentLevel);
-        } else
+        }
+        else
         {
             // If no more levels, failsafe, load main menu.
             print("No more levels?\nFailsafe: Loading main menu...");
             LoadMainMenu();
         }
+    }
+
+    void SaveGame()
+    {
+        print("Saving game...");
+        PlayerPrefs.SetInt("Level Completed", currentLevel);
+        PlayerPrefs.SetInt("Level " + currentLevel.ToString() + " score", currentScore);
     }
 
     public void AddCoin()
@@ -122,18 +143,60 @@ public class GameManager : MonoBehaviour {
     void OnGUI()
     {
         GUI.skin = skin;
-        if(startTime < 10f)
+
+        // Timer warning
+        if (startTime < 10f)
         {
             skin.GetStyle("Timer Label").normal.textColor = timerWarningColor;
         } else
         {
             skin.GetStyle("Timer Label").normal.textColor = defaultTimerColor;
         }
-
         // Coins
-        GUI.Label(new Rect(45,100,200,200), "Coins: " + coinCount.ToString() + "/" + totalCoinCount.ToString(), skin.GetStyle("Coin"));
+        GUI.Label(coinRect, "Coins: " + coinCount.ToString() + "/" + totalCoinCount.ToString(), skin.GetStyle("Coin"));
 
         // Timer
         GUI.Label(timerRect, "Time: " + currentTime, skin.GetStyle("Timer Label"));
+
+        if(showWinScreen)
+        {
+            // Center to screen
+            // additionally:
+            // to centre and adjust based on screen size automatically:
+            // Rect(screenX, screenY, winBoxWidth, winBoxHeight); 
+            float screenX = Screen.width / 2 - (Screen.width * 0.5f / 2);
+            float screenY = Screen.height / 2 - (Screen.height * 0.5f / 2);
+            float winBoxWidth = Screen.width * 0.5f;
+            float winBoxHeight = Screen.height * 0.5f;
+            
+            Rect winScreenRect = new Rect(Screen.width / 2 - (winScreenWidth/2), Screen.height/2 - (winScreenHeight/2), winScreenWidth, winScreenHeight);
+            GUI.Box(winScreenRect, "Level completed!");
+
+            // Get Level Score
+            int finTime = (int)startTime;
+            currentScore = coinCount * finTime;
+
+            if (GUI.Button(new Rect(winScreenRect.x + 20, winScreenRect.y + winScreenRect.height - 60, 150, 40), "Continue"))
+            {
+                LoadNextLevel();
+            }
+
+
+            if (GUI.Button(new Rect(winScreenRect.x + winScreenRect.width - 170, winScreenRect.y + winScreenRect.height - 60, 150, 40), "Quit"))
+            {
+                LoadMainMenu();
+            }
+
+            // TODO:
+            // Extra features?
+            // Maybe add a star rating based on how the player did the level.
+            // eg 3 stars = all coins collected + end time is < xx
+
+            // Print score
+            GUI.Label(new Rect(winScreenRect.x + 20, winScreenRect.y + 40, 300, 50), "Completed level " + currentLevel + 1, "levelScore");
+            GUI.Label(new Rect(winScreenRect.x + 20, winScreenRect.y + 90, 300, 50), "Level Score: " + currentScore.ToString(), "levelScore");
+
+
+        }
     }
 }
