@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public GameObject deathParticles;
 
     private float maxSpeed = 5f;
+    public bool usesManager = true;
 
     private Vector3 input;        // Vector3 Input
     public Rigidbody rbName;      // Rigidbody
@@ -19,13 +20,17 @@ public class Player : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if(usesManager)
+        {
+            // Get GameManager class.
+            manager = manager.GetComponent<GameManager>();
+            print("Current Level: Level " + manager.currentLevel);
+        }
+
         rbName = GetComponent<Rigidbody>();
         spawn = transform.position;
 
-        // Get GameManager class.
-        manager = manager.GetComponent<GameManager>();
 
-        print("Current Level: Level " + manager.currentLevel);
 
     }
 
@@ -43,6 +48,8 @@ public class Player : MonoBehaviour
         {
             Die();
         }
+
+        Physics.gravity = Physics.Raycast(transform.position, Vector3.down, .5f) ? Vector3.zero : new Vector3(0, -9.5f, 0);
 
     }
 

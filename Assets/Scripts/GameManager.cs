@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
     public int coinCount;
     private int totalCoinCount;
 
+
     // Levels
     public int currentLevel = 1;
     public int unlockedLevel;
@@ -115,6 +116,8 @@ public class GameManager : MonoBehaviour {
     {
 
         Time.timeScale = 1f;
+        // TODO: 
+        // make this if statement better
         if (currentLevel < 3)
         {
             // Player reached the end
