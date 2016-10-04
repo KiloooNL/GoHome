@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour {
     private bool showWinScreen = false;
     private bool completed;
 
+    // Audio
+    public AudioClip[] audioClip;
+
     public int winScreenWidth, winScreenHeight;
 
     // dont destroy on new scene load
@@ -95,11 +98,15 @@ public class GameManager : MonoBehaviour {
     public void LoadMainMenu()
     {
         print("Loading main menu...");
+        Time.timeScale = 1f;
         SceneManager.LoadScene("main_menu");
     }
 
     public void CompleteLevel()
     {
+        // Freeze time so objects stop moving
+        PlaySound(4);
+        Time.timeScale = 0f;
         showWinScreen = true;
         completed = true;
     }
@@ -107,6 +114,7 @@ public class GameManager : MonoBehaviour {
     void LoadNextLevel()
     {
 
+        Time.timeScale = 1f;
         if (currentLevel < 3)
         {
             // Player reached the end
@@ -139,6 +147,15 @@ public class GameManager : MonoBehaviour {
         // add sound here...
     }
 
+
+    // Audio
+    // void PlaySound (index in array) {}
+    public void PlaySound(int clip)
+    {
+        AudioSource audio = GetComponent<AudioSource>();
+        audio.clip = audioClip[clip];
+        audio.Play();
+    }
 
     void OnGUI()
     {
@@ -184,6 +201,7 @@ public class GameManager : MonoBehaviour {
 
             if (GUI.Button(new Rect(winScreenRect.x + winScreenRect.width - 170, winScreenRect.y + winScreenRect.height - 60, 150, 40), "Quit"))
             {
+                PlaySound(1);
                 LoadMainMenu();
             }
 

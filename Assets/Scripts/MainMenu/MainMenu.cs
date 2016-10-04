@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public GameManager manager;
+
     Rect newGamePosition = new Rect(400, 120, 140, 45);
     //Rect newGameTimerPosition = new Rect(400, 120, 140, 45);
     Rect resumePosition = new Rect(400, 175, 140, 45);
@@ -77,8 +79,8 @@ public class MainMenu : MonoBehaviour
 
     void resumeGame(bool timer)
     {
-
-        if(timer == true)
+        manager.PlaySound(1);
+        if (timer == true)
         {
 
         }
