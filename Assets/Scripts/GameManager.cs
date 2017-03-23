@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour {
         /*********************
         * Get Level Progress *
         *********************/
-        if(PlayerPrefs.GetInt("Level Completed") > 0)
+        if(PlayerPrefs.GetInt("Level Completed") >= 1)
         {
             currentLevel = PlayerPrefs.GetInt("Level Completed");
         } else
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1f;
         // TODO: 
         // make this if statement better
-        if (currentLevel < 3)
+        if (currentLevel <= 3)
         {
             // Player reached the end
             print("Player reached end of level.");

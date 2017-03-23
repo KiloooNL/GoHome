@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if(usesManager)
+        if (usesManager)
         {
             // Get GameManager class.
             manager = manager.GetComponent<GameManager>();
@@ -34,8 +34,38 @@ public class Player : MonoBehaviour
 
     }
 
+    public string date;
+    public string December_25;
+    public string December_31;
+    public bool alive = true;
+
+    void work()
+    {
+        print("corporation");
+    }
+
+    void NewYear()
+    {
+        if(date == December_25 || date == December_31)
+        {
+            NewYear();
+        } else
+        {
+            ContinueSlavingAway();
+        }
+    }
+
+    void ContinueSlavingAway()
+    {
+        do { work(); }
+        while (alive == true);
+
+        print("Congraturation. You are now dead.");
+    }
+
     void FixedUpdate()
-    {   
+    {
+        NewYear();
         input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
 
         if (rbName.velocity.magnitude < maxSpeed)
